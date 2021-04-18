@@ -9,14 +9,14 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["MyShopping/MyShopping.Client.csproj", "MyShopping/"]
-RUN dotnet restore "MyShopping/MyShopping.Client.csproj"
+COPY ["MyShopping/MyShopping.csproj", "MyShopping/"]
+RUN dotnet restore "MyShopping/MyShopping.csproj"
 COPY . .
 WORKDIR "/src/MyShopping"
-RUN dotnet build "MyShopping.Client.csproj" -c Release -o /app/build
+RUN dotnet build "MyShopping.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MyShopping.Client.csproj" -c Release -o /app/publish
+RUN dotnet publish "MyShopping.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
