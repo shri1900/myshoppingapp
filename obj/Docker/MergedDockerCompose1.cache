@@ -1,0 +1,43 @@
+services:
+  myshopping.api:
+    build:
+      context: C:\Users\thombshr\source\repos\my-run-devops\MyShopping\myshoppingapp
+      dockerfile: MyShopping.API/Dockerfile
+    container_name: myshoppingapi
+    depends_on:
+      shopping.db:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseSettings:ConnectionString: mongodb://shoppingdb:27017
+    image: myshoppingapi
+    ports:
+    - published: 8000
+      target: 80
+  myshopping.client:
+    build:
+      context: C:\Users\thombshr\source\repos\my-run-devops\MyShopping\myshoppingapp
+      dockerfile: MyShopping.Client/Dockerfile
+    container_name: myshoppingclient
+    depends_on:
+      myshopping.api:
+        condition: service_started
+      shopping.db:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ShoppingAPIUrl: http://myshoppingapi
+    image: myshoppingclient
+    ports:
+    - published: 8001
+      target: 80
+  shopping.db:
+    container_name: shoppingdb
+    image: mongo
+    ports:
+    - published: 27017
+      target: 27017
+    restart: always
+    volumes:
+    - /site:/data/db:rw
+version: '3.4'
